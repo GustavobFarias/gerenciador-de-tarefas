@@ -50,7 +50,7 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
-    outDir: 'build',
+    outDir: 'dist',
     reportCompressedSize: false, // 🚀 Desativa cálculo gzip (evita travamento)
   },
   server: {
