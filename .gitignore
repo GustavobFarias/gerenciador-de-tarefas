@@ -1,0 +1,17 @@
+# Dependências
+node_modules/
+
+# Compilados e cache
+dist/
+build/
+coverage/
+.nyc_output/
+.next/
+out/
+
+# Logs
+*.log
+
+# Ambiente
+.env
+.env.local
