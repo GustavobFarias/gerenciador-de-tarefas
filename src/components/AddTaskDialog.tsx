@@ -7,7 +7,7 @@ import { Task } from './TaskItem';
 interface AddTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (title: string, dayOfWeek: number, time?: string) => void;
+  onSave: (title: string, dayOfWeek: number, startTime?: string, endTime?: string) => void;
   dayOfWeek: number;
   editingTask?: Task | null;
   onUpdate?: (task: Task) => void;
@@ -33,17 +33,20 @@ export function AddTaskDialog({
 }: AddTaskDialogProps) {
   const [title, setTitle] = useState('');
   const [selectedDay, setSelectedDay] = useState(dayOfWeek);
-  const [time, setTime] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
 
   useEffect(() => {
     if (editingTask) {
       setTitle(editingTask.title);
       setSelectedDay(editingTask.dayOfWeek);
-      setTime(editingTask.time || '');
+      setStartTime(editingTask.startTime || '');
+      setEndTime(editingTask.endTime || '');
     } else {
       setTitle('');
       setSelectedDay(dayOfWeek);
-      setTime('');
+      setStartTime('');
+      setEndTime('');
     }
   }, [editingTask, dayOfWeek, open]);
 
@@ -55,13 +58,15 @@ export function AddTaskDialog({
           ...editingTask,
           title: title.trim(),
           dayOfWeek: selectedDay,
-          time: time || undefined
+          startTime: startTime || undefined,
+          endTime: endTime || undefined
         });
       } else {
-        onSave(title.trim(), selectedDay, time || undefined);
+        onSave(title.trim(), selectedDay, startTime || undefined, endTime || undefined);
       }
       setTitle('');
-      setTime('');
+      setStartTime('');
+      setEndTime('');
       onOpenChange(false);
     }
   };
@@ -76,6 +81,7 @@ export function AddTaskDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Título */}
           <div className="space-y-2">
             <label htmlFor="task-title" className="text-sm">
               Título da tarefa
@@ -89,6 +95,7 @@ export function AddTaskDialog({
             />
           </div>
 
+          {/* Dia da semana */}
           <div className="space-y-2">
             <label htmlFor="day-select" className="text-sm">
               Dia da semana
@@ -107,16 +114,29 @@ export function AddTaskDialog({
             </select>
           </div>
 
+          {/* Horário de início */}
           <div className="space-y-2">
-            <label htmlFor="task-time" className="text-sm">
-              Horário (opcional)
+            <label htmlFor="task-start-time" className="text-sm">
+              Horário de início (opcional)
             </label>
             <Input
-              id="task-time"
+              id="task-start-time"
               type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              placeholder="Selecione o horário"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+            />
+          </div>
+
+          {/* Horário de término */}
+          <div className="space-y-2">
+            <label htmlFor="task-end-time" className="text-sm">
+              Horário de término (opcional)
+            </label>
+            <Input
+              id="task-end-time"
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
             />
           </div>
 

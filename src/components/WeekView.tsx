@@ -4,7 +4,6 @@ import { Button } from './ui/button';
 import { Plus } from 'lucide-react';
 import { Task, TaskItem } from './TaskItem';
 import { AddTaskDialog } from './AddTaskDialog';
-import { cn } from './ui/utils';
 
 const daysOfWeek = [
   { name: 'Segunda', short: 'SEG' },
@@ -18,18 +17,18 @@ const daysOfWeek = [
 
 interface WeekViewProps {
   tasks: Task[];
-  onAddTask: (title: string, dayOfWeek: number, time?: string) => void;
+  onAddTask: (title: string, dayOfWeek: number, startTime?: string, endTime?: string) => void;
   onToggleTask: (id: string) => void;
   onDeleteTask: (id: string) => void;
   onUpdateTask: (task: Task) => void;
 }
 
-export function WeekView({ 
-  tasks, 
-  onAddTask, 
-  onToggleTask, 
+export function WeekView({
+  tasks,
+  onAddTask,
+  onToggleTask,
   onDeleteTask,
-  onUpdateTask 
+  onUpdateTask
 }: WeekViewProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState(0);
@@ -49,12 +48,11 @@ export function WeekView({
 
   const getTasksForDay = (dayIndex: number) => {
     const dayTasks = tasks.filter(task => task.dayOfWeek === dayIndex);
-    // Ordenar por horário, tarefas sem horário vão para o final
     return dayTasks.sort((a, b) => {
-      if (!a.time && !b.time) return 0;
-      if (!a.time) return 1;
-      if (!b.time) return -1;
-      return a.time.localeCompare(b.time);
+      if (!a.startTime && !b.startTime) return 0;
+      if (!a.startTime) return 1;
+      if (!b.startTime) return -1;
+      return a.startTime.localeCompare(b.startTime);
     });
   };
 
@@ -70,7 +68,7 @@ export function WeekView({
         {daysOfWeek.map((day, index) => {
           const dayTasks = getTasksForDay(index);
           const { completed, total } = getCompletedCount(index);
-          
+
           return (
             <Card key={index} className="flex flex-col">
               <div className="p-4 border-b bg-muted/30">
@@ -113,7 +111,14 @@ export function WeekView({
                       onToggle={onToggleTask}
                       onDelete={onDeleteTask}
                       onEdit={handleEditClick}
-                    />
+                    >
+                      {/* Exibir horário de início e fim */}
+                      {(task.startTime || task.endTime) && (
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {task.startTime ?? '--'}{task.endTime ? ` - ${task.endTime}` : ''}
+                        </div>
+                      )}
+                    </TaskItem>
                   ))
                 )}
               </div>
